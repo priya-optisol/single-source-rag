@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+# Secrets
+.env
+*.env
+!.env.example
+# Generated data
+backend/data/faiss_index/*
+backend/data/uploads/*
+backend/logs/*
+!backend/data/faiss_index/.gitkeep
+!backend/data/uploads/.gitkeep
+!backend/logs/.gitkeep
+# Model cache
+.cache/
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
