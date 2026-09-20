@@ -155,729 +155,125 @@ function onDocumentReady(data) {
     loadTopics();
 }
 el.clearDoc.addEventListener("click", () => {
-    s
-    t
-    a
-    t
-    e.d
-    o
-    c
-    u
-    m
-    e
-    n
-    t
-    I
-    d
-        =
-        n
-    u
-    l
-    l;
+    state.documentId = null;
     el.docMeta.classList.add(
-        "
-        h i d d e n "
+        "hidden"
     );
-    el.dropzone.classList.remove("hidde
-        n "
-    );
+    el.dropzone.classList.remove("hidden");
     el.topicsPanel.classList.add("hidden");
     el.suggestions.classList.add("hidden");
-    el.messages.replaceChildren(el.emptySta t e);
+    el.messages.replaceChildren(el.emptyState);
     el.emptyState.classList.remove("hidden");
     el.fileInput.value = "";
     setBusy(false);
     status("");
 });
-/* ==========================================
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-S
-u
-g
-g
-e
-s
-t
-i
-o
-n
-s
-&
-t
-o
-p
-i
-c
-s
-(
-n
-o
-n
--
-c
-r
-i
-t
-i
-c
-a
-l
--
--
-f
-a
-i
-l
-s
-i
-l
-e
-n
-t
-l
-y
-)
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-=
-*
-/
-a
-s
-y
-n
-c
-f
-u
-n
-c
-t
-i
-o
-n
-l
-o
-a
-d
-S
-u
-g
-g
-e
-s
-t
-i
-o
-n
-s
-(
-)
-{
-t
-r
-y
-{
-c
-o
-n
-s
-t
-r
-e
-s
-=
-a
-w
-a
-i
-t
-f
-e
-t
-c
-h
-(
-`
-$
-{
-A
-P
-I
+// suggestions & topics (non critical- fail silently)
+async function loadSuggestions() {
+    try {
+        const res = await fetch(`${API}/api/suggestions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ document_id: state.documentId }),
+        });
+        const { suggestions } = await res.json();
+        if (!suggestions?.length)
+            return;
+        el.suggestions.replaceChildren();
+        suggestions.forEach((text) => {
+            const chip = node("button", "chip", text);
+            chip.type = "button";
+            chip.addEventListener("click", () => {
+                el.question.value = text;
+                el.composer.requestSubmit();
+            });
+            el.suggestions.appendChild(chip);
+        });
+        el.suggestions.classList.remove("hidden");
+    } catch {
+
+    }
 }
-/
-a
-p
-i
-/
-s
-u
-g
-g
-e
-s
-t
-i
-o
-n
-s
-`, {
-m
-e
-t
-h
-o
-d: "
-P
-O
-S
-T
-", headers: { "Con
-t
-e
-n
-t
--
-T
-y
-p
-e
-": "
-a
-p
-p
-l
-i
-c
-a
-t
-i
-o
-n
-/
-j
-s
-o
-n
-"
-}, body: JSON.stringify({ document_id: state.docume
-n
-t
-I
-d
-}
-), }); const { suggestions } = await res.json(); if (!suggestions?.length) return; el.suggestions.replaceChildren(); suggestions.forEach((text) => { const chip = node("button", "chip", text); chip.type = "button"; chip.addEventListener("click", () => { el.question.value = text; el.composer.requestSubmit(); }); el.suggestions.appendChild(chip); }); el.suggestions.classList.remove("hidden"); } catch { /* decorative feature; ignore */
-}
-}
-a
-s
-y
-n
-c
-f
-u
-n
-c
-t
-i
-o
-n
-l
-o
-a
-d
-T
-o
-p
-i
-c
-s
-    () {
-        t
-        r
-        y {
-            c
-            o
-            n
-            s
-            t
-            r
-            e
-            s
-                =
-                a
-            w
-            a
-            i
-            t
-            f
-            e
-            t
-            c
-            h
-                (
-                    `
-$
-{
-A
-P
-I
-}
-/
-a
-p
-i
-/
-t
-o
-p
-i
-c
-s
-`, {
-                        m
-                        e
-                        t
-                        h
-                        o
-                        d: "
-                        P
-                        O
-                        S
-                        T ", headers: { "
-                        Con
-                        t
-                        e
-                        n
-                        t -
-                        T
-                        y
-                        p
-                        e ": "
-                        a
-                        p
-                        p
-                        l
-                        i
-                        c
-                        a
-                        t
-                        i
-                        o
-                        n /
-                        j
-                        s
-                        o
-                        n "
-                    }, body: JSON.stringify({
-                        document_id: state.docume
-                        n
-                        t
-                        I
-                        d
-                    }),
-                });
-        const {
-            topics
-        } = await res.json();
+
+async function loadTopics() {
+    try {
+        const res = await fetch(`${API}/api/topics`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ document_id: state.documentId }),
+        });
+        const { topics } = await res.json();
         if (!topics?.length) return;
+
         el.topicsList.replaceChildren();
         topics.forEach((t) => {
             const li = node("li");
             li.appendChild(node("strong", null, t.title));
-            if (t.summary) li.appendChild(node("span", null, t.summa r y));
+            if (t.summary)
+                li.appendChild(node("span", null, t.summary))
+
             li.addEventListener("click", () => {
-                el.question.value = `Tell me about ${t.title} in this docum
-e
-n
-t.`;
+                el.question.value = `Tell me about ${t.title} in this document`;
                 el.question.focus();
+
             });
             el.topicsList.appendChild(li);
         });
         el.topicsPanel.classList.remove("hidden");
     } catch {
-        /* ignore */ }
+
+    }
 }
-/ *
-= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-Q
-u
-e
-ry
-    = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = *
-    /
-e
-l.c
-o
-m
-p
-o
-s
-e
-r.a
-d
-d
-E
-v
-e
-n
-t
-L
-i
-s
-t
-e
-n
-e
-r
-    (
-        "
-        s u b m i t ", (
-        e
-    ) = >
-    {
-        e.p
-        r
-        e
-        v
-        e
-        n
-        t
-        D
-        e
-        f
-        a
-        u
-        l
-        t();askQuestion();
-    });
-/* Enter sends, Shift
-+
-E
-n
-t
-e
-r
-m
-a
-k
-e
-s
-a
-n
-e
-w
-l
-i
-n
-e. *
-/
-e
-l.q
-u
-e
-s
-t
-i
-o
-n.a
-d
-d
-E
-v
-e
-n
-t
-L
-i
-s
-t
-e
-n
-e
-r
-(
-"
-k
-e
-y
-d
-o
-w
-n
-", (
-e
-)
-=
->
-{
-i
-f
-(
-e.k
-e
-y
-=
-=
-=
-"
-E
-n
-t
-e
-r
-"
-&
-& !e.s
-h
-i
-f
-t
-K
-e
-y
-)
-{
-e.p
-r
-e
-v
-e
-n
-t
-D
-e
-f
-a
-u
-l
-t
-(
-); el.composer.request
-S
-u
-b
-m
-i
-t
-(
-); }
+
+el.composer.addEventListener("submit", (e) => { e.preventDefault(); askQuestion(); });
+
+el.question.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        el.composer.requestSubmit();
+    }
 }
-); /*
-A
-u
-t
-o
--
-g
-r
-o
-w
-t
-h
-e
-t
-e
-x
-t
-a
-r
-e
-a. *
-/
-e
-l.q
-u
-e
-s
-t
-i
-o
-n.a
-d
-d
-E
-v
-e
-n
-t
-L
-i
-s
-t
-e
-n
-e
-r
-(
-"
-i
-n
-p
-u
-t
-", (
-)
-=
->
-{
-e
-l.q
-u
-e
-s
-t
-i
-o
-n.s
-t
-y
-l
-e.h
-e
-i
-g
-h
-t
-=
-"
-a
-u
-t
-o
-"; el.question.style.height = `${Math.m
-i
-n
-(
-e
-l.q
-u
-e
-s
-t
-i
-o
-n.s
-c
-r
-o
-l
-l
-H
-e
-i
-g
-h
-t, 1
-6
-0
-)
-}
-p
-x
-`; });
-async function askQuestion() {
-const question = el.question.value.trim();
-if (!question || !state.documentId || state.busy) return;
-el.suggestions.classList.add("hidden");
-renderUserMessage(question);
-el.question.value = "";
-el.question.style.height = "auto";
-setBusy(true);
-const thinking = renderThinking();
-status("Retrieving, re-ranking, generating…");
-try {
-const res = await fetch(`${API}/api/query`, {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-document_id: state.documentId,
-question,
-evaluate: true,
-}),
+);
+
+el.question.addEventListener("input", () => {
+    el.question.style.height = "auto";
+    el.question.style.height = `${Math.min(el.question.scrollHeight, 160)}px`;
 });
-const data = await res.json();
-thinking.remove();
-if (!res.ok) throw new Error(data.detail || `Request failed (${res.status})`);
-renderBotMessage(data);
-if (state.ttsEnabled) speak(data.answer);
-status(`Answered in ${data.latency_ms} ms · ${data.sources.length} sources`);
-} catch (err) {
-thinking.remove();
-toast(err.message);
-status("");
-} finally {
-setBusy(false);
-el.question.focus();
-}
+
+async function askQuestion() {
+    const question = el.question.value.trim();
+    if (!question || !state.documentId || state.busy) return;
+    el.suggestions.classList.add("hidden");
+    renderUserMessage(question);
+    el.question.value = "";
+    el.question.style.height = "auto";
+    setBusy(true);
+    const thinking = renderThinking();
+    status("Retrieving, re-ranking, generating…");
+    try {
+        const res = await fetch(`${API}/api/query`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                document_id: state.documentId,
+                question,
+                evaluate: true,
+            }),
+        });
+        const data = await res.json();
+        thinking.remove();
+        if (!res.ok) throw new Error(data.detail || `Request failed (${res.status})`);
+        renderBotMessage(data);
+        if (state.ttsEnabled) speak(data.answer);
+        status(`Answered in ${data.latency_ms} ms · ${data.sources.length} sources`);
+    } catch (err) {
+        thinking.remove();
+        toast(err.message);
+        status("");
+    } finally {
+        setBusy(false);
+        el.question.focus();
+    }
 }
 /* =========================================================
 Rendering
