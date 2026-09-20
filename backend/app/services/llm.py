@@ -17,6 +17,7 @@ def get_llm(temperature: float | None = None) -> ChatOpenAI:
     api_key=settings.llm_api_key,
     base_url=settings.openai_base_url,
     temperature=settings.llm_temperature if temperature is None else temperature,
+    max_tokens=settings.llm_max_tokens,
     timeout=60,
     max_retries=0, # we handle retries with tenacity below
     )

@@ -106,17 +106,18 @@ No markdown fences, no commentary.
 --- END ---
 JSON array:"""
 
-def _sample_context(document_id: str, max_chars: int = 12000) -> str:
+def _sample_context(document_id: str, max_chars: int = 8000) -> str:
     """Take an even spread of chunks across the document.
     Sampling evenly matters: the first N chunks of a report are a title page
     and a table of contents, which produce useless topics.
+    Keep the context small enough for low-credit OpenRouter accounts.
     """
     from app.services.document_processor import get_all_chunks
     chunks = get_all_chunks(document_id)
     if not chunks:
         return ""
-    step = max(1, len(chunks) // 24)
-    sampled = chunks[::step][:24]
+    step = max(1, len(chunks) // 16)
+    sampled = chunks[::step][:16]
     out, total = [], 0
     for c in sampled:
         text = c.page_content.strip()

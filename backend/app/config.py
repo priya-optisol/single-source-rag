@@ -14,8 +14,9 @@ class Settings(BaseSettings):
     # ---- LLM ----
     llm_api_key: str = Field(..., description="API key for the OpenAI-compatible endpoint")
     openai_base_url: str = "https://openrouter.ai/api/v1"
-    llm_model: str = "google/gemini-2.0-flash-001"
+    llm_model: str = "google/gemini-2.5-flash"
     llm_temperature: float = 0.1
+    llm_max_tokens: int = Field(default=1024, description="Hard cap for generated completion tokens to avoid OpenRouter credit errors")
     # ---- Local models ----
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
